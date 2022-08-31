@@ -10,9 +10,20 @@
 </head>
 
 <body>
-
-    <div class="container">
-        <div id="board">
+    <div class="container" id="blur">
+        <header>
+            <h1>Tic Tac Toe</h1>
+        </header>
+        <div class="board-wrapper">
+            <div id="board">
+            </div>
+            <button onclick="Gameboard.resetBoard()">Restart</button>
+        </div>
+    </div>
+        <div id="popup">
+            <h2 id="winner">testing this
+            </h2>
+            <a href="#" onclick="toggle()">Close</a>
         </div>
     </div>
     <script src="main.js"></script>
