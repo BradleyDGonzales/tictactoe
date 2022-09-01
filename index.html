@@ -19,12 +19,19 @@
             </div>
             <button onclick="Gameboard.resetBoard()">Restart</button>
         </div>
-    </div>
-        <div id="popup">
-            <h2 id="winner">testing this
-            </h2>
-            <a href="#" onclick="toggle()">Close</a>
+        <div>
+        <label id="switch-slider" class="switch">
+            <input id="checkbox1" type="checkbox">
+            <span class="slider"></span>
+          </label>
+          <p id="switch-slider-text">vs. AI (once activated, no going back!)</p>
         </div>
+    </div>
+    <div id="popup">
+        <h2 id="winner">testing this
+        </h2>
+        <a href="#" onclick="toggle()">Close</a>
+    </div>
     </div>
     <script src="main.js"></script>
 </body>
