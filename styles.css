@@ -178,15 +178,20 @@ a:hover {
   height: 100%;
   background-color: #777;
   border-radius: 30px;
-  transform: translateX(-55px); /*translateX(-(w-h))*/
+  transform: translateX(-55px);
   transition: 0.2s;
 }
 input:checked + .slider:before
 {
-  transform: translateX(4px); /*translateX(w-h)*/
+  transform: translateX(4px);
   background-color: rgb(141, 0, 0);
 }
 input:checked + .slider
 {
   box-shadow: 0 0 0 2px rgb(141, 0, 0), 0 0 8px rgb(141, 0, 0);;
+}
+#switch-slider-text {
+    font-family: rudimentmedium, cursive;
+    font-size: 20px;
+    font-weight: 900;
 }
