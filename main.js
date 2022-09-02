@@ -1,29 +1,43 @@
-/*
-
-
-TODO OPTIONAL: make the AI unbeatable;
-
-
-*/
 const Gameboard = (() => {
     const winningBoard = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
     let playerOneArray = [];
     let playerTwoArray = [];
-    const board =
-        [``, ``, ``,
-            ``, ``, ``,
-            ``, ``, ``];
+    let reset;
+    let board =
+        [0, 1, 2,
+            3, 4, 5,
+            6, 7, 8];
     const makeBoard = () => {
         const boardElement = document.getElementById(`board`);
-        for (let i = 0; i < board.length; i++) {
-            const cell = document.createElement(`div`);
-            cell.classList.add(`cells`)
-            cell.setAttribute(`id`, `cell${i}`);
-            cell.innerText = board[i]
-            boardElement.appendChild(cell);
+        if (reset) {
+            Gameboard.board =
+                [0, 1, 2,
+                    3, 4, 5,
+                    6, 7, 8];
+            for (let i = 0; i < Gameboard.board.length; i++) {
+                const cell = document.createElement(`div`);
+                cell.classList.add(`cells`)
+                cell.setAttribute(`id`, `cell${i}`);
+                boardElement.appendChild(cell);
+            }
+            reset = false;
+        }
+        else {
+            for (let i = 0; i < Gameboard.board.length; i++) {
+                const cell = document.createElement(`div`);
+                cell.classList.add(`cells`)
+                cell.setAttribute(`id`, `cell${i}`);
+                boardElement.appendChild(cell);
+            }
+
         }
     }
     const resetBoard = () => {
+        reset = true;
+        Gameboard.board =
+            [0, 1, 2,
+                3, 4, 5,
+                6, 7, 8];
         const boardElement = document.getElementById(`board`);
         while (boardElement.firstChild) {
             boardElement.removeChild(boardElement.lastChild);
@@ -38,6 +52,7 @@ const Gameboard = (() => {
         match = false;
         tie = false;
         winner = ``;
+        sign = ``;
         if (document.getElementById(`checkbox1`).checked === true) {
             document.getElementById(`checkbox1`).checked = false;
         }
@@ -63,8 +78,21 @@ const Gameboard = (() => {
         }
         toggle();
     }
+    const findCommonElements = (arr1, arr2) => {
+        for (let i = 0; i < arr1.length; i++) {
+            merged = [].concat.apply([], arr1[i]);
+            let filteredArray = arr2.filter(value => merged.includes(value));
+            if (filteredArray.length === 3) {
+                match = true;
+            }
+            else if (Gameboard.playerOneArray.length === 5 && Gameboard.playerTwoArray.length === 4) {
+                tie = true;
+            }
+        }
+
+    }
     return {
-        makeBoard, board, winningBoard, playerOneArray, playerTwoArray, resetBoard, displayWinner
+        makeBoard, board, winningBoard, playerOneArray, playerTwoArray, resetBoard, displayWinner, findCommonElements
     };
 })();
 const Player = (sign) => {
@@ -89,9 +117,10 @@ const Player = (sign) => {
                     }
                     e.target.innerText = Player1.mySign();
                     let cellID = e.target.getAttribute(`id`).slice(-1);
+                    Gameboard.board.splice(cellID, 1, sign);
                     Gameboard.playerOneArray.push(parseInt(cellID));
                     Gameboard.playerOneArray.sort();
-                    findCommonElements(Gameboard.winningBoard, Gameboard.playerOneArray);
+                    Gameboard.findCommonElements(Gameboard.winningBoard, Gameboard.playerOneArray);
                     player1Count++;
                     if (player1Count === 1 && document.getElementById(`checkbox1`).checked === false) {
                         hideSlider();
@@ -104,20 +133,23 @@ const Player = (sign) => {
                     turn = !turn;
                 }
                 if (document.getElementById(`checkbox1`).checked === true) {
+
                     document.getElementById(`checkbox1`).disabled = true;
                     if (player1Count === 5 && !match) {
                         tie = true;
                         Gameboard.displayWinner();
                         return;
                     }
+                    sign = `O`;
                     let randomNumber = Math.floor(Math.random() * 8) + 1;
                     let randomElement = document.getElementById(`cell${randomNumber}`);
                     if (randomElement.innerText === `` && !turn) {
                         randomElement.innerText = Player2.mySign();
                         turn = !turn;
+                        Gameboard.board.splice(randomNumber, 1, sign);
                         Gameboard.playerTwoArray.push(parseInt(randomNumber));
                         Gameboard.playerTwoArray.sort();
-                        findCommonElements(Gameboard.winningBoard, Gameboard.playerTwoArray);
+                        Gameboard.findCommonElements(Gameboard.winningBoard, Gameboard.playerTwoArray);
                         player2Count++;
                         if (match) {
                             winner = Player2.mySign();
@@ -154,9 +186,10 @@ const Player = (sign) => {
                     }
                     e.target.innerText = Player2.mySign();
                     let cellID = e.target.getAttribute(`id`).slice(-1);
+                    Gameboard.board.splice(cellID, 1, sign);
                     Gameboard.playerTwoArray.push(parseInt(cellID));
                     Gameboard.playerTwoArray.sort();
-                    findCommonElements(Gameboard.winningBoard, Gameboard.playerTwoArray);
+                    Gameboard.findCommonElements(Gameboard.winningBoard, Gameboard.playerTwoArray);
                     player2Count++;
                     if (match) {
                         winner = Player2.mySign();
@@ -174,6 +207,7 @@ const Player = (sign) => {
     }
     return { sign, mySign, playerMove };
 }
+
 const Player1 = Player(`X`);
 const Player2 = Player(`O`);
 let match;
@@ -186,18 +220,7 @@ let player1Count = 0;
 let player2Count = 0;
 let hidden;
 Gameboard.makeBoard();
-function findCommonElements(arr1, arr2) {
-    for (let i = 0; i < arr1.length; i++) {
-        merged = [].concat.apply([], arr1[i]);
-        let filteredArray = arr2.filter(value => merged.includes(value));
-        if (filteredArray.length === 3) {
-            match = true;
-        }
-        else if (Gameboard.playerOneArray.length === 5 && Gameboard.playerTwoArray.length === 4) {
-            tie = true;
-        }
-    }
-}
+
 function toggle() {
     let blur = document.getElementById(`blur`);
     blur.classList.toggle(`active`);
@@ -223,6 +246,5 @@ function displaySlider() {
     sliderText.style.visibility = "visible";
 
 }
-
 
 window.onload = Player1.playerMove();
